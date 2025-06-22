@@ -1,6 +1,6 @@
 # 💱 Flutter Currency Converter
 
-A simple Flutter app for converting currency. The app offers two main conversion modes:
+A  Flutter app for converting currency. The app offers two main conversion modes:
 - **USD to any currency**
 - **Any currency to any other currency**
 
