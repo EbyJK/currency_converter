@@ -1,6 +1,8 @@
+import 'package:currency_converter/components/usdToAny.dart';
 import 'package:currency_converter/functions/fetchrates.dart';
 import 'package:currency_converter/models/ratesmodel.dart';
 import 'package:flutter/material.dart';
+import 'package:currency_converter/components/AnyToAny.dart';
 
 class Home extends StatefulWidget{
   const Home ({Key?key}):super(key:key);
@@ -11,6 +13,7 @@ class Home extends StatefulWidget{
 
 class _HomeState extends State<Home>{
   late Future<RatesModel> result;
+  late Future<Map> allCurrencies;
 
 final formkey=GlobalKey<FormState>();
 
@@ -20,11 +23,12 @@ final formkey=GlobalKey<FormState>();
   void initState(){
     super.initState();
     result=fetchrates();
+    allCurrencies= fetchcurrencies();
   }
   Widget build(BuildContext context){
     var h=MediaQuery.of(context).size.height;
     var w=MediaQuery.of(context).size.width;
-    return Scaffold(appBar: AppBar(backgroundColor: const Color.fromARGB(255, 50, 174, 56),
+    return Scaffold(appBar: AppBar(backgroundColor: const Color.fromARGB(255, 255, 255, 255),
     title:const Text('Currency Convertor'),
     centerTitle: true,
     
@@ -51,8 +55,25 @@ final formkey=GlobalKey<FormState>();
             ){
               return const Center(child: CircularProgressIndicator(),);
             }
-            return Center(child: Text(snapshot.data!.rates.toString(),style:const TextStyle(fontSize:20,color:Colors.white),),
-            
+            return Center(child:FutureBuilder<Map>(
+            future: allCurrencies,
+            builder:(context,currSnapshot){
+              if(currSnapshot.connectionState==ConnectionState.waiting){
+                return const Center(child: CircularProgressIndicator(),
+
+                
+                );
+              }
+              return Column(
+                children:[
+                    UsdToAny(rates:snapshot.data!.rates,currencies:currSnapshot.data!),
+                    SizedBox(height:75,),
+                    AnyToAny(rates:snapshot.data!.rates,currencies:currSnapshot.data!)
+                ],
+              );
+            },
+
+            )
             );
            },
         
